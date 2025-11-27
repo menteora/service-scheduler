@@ -1,11 +1,12 @@
 import React from 'react';
 import { Operator, Intervention } from '../../types';
-import { ChevronLeft, ChevronRight, Calendar as CalendarIcon, Users, Moon, Sun, Loader2 } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Calendar as CalendarIcon, Users, Loader2, Save } from 'lucide-react';
 import { CalendarInterventionItem } from '../CalendarInterventionItem';
 import { formatDateISO, formatDayName, formatDisplayDate, formatMonthYear, isSameDate } from '../../utils/dateUtils';
 
 interface CalendarViewProps {
   loading: boolean;
+  saving?: boolean;
   operators: Operator[];
   interventions: Intervention[];
   weekDays: Date[];
@@ -15,23 +16,23 @@ interface CalendarViewProps {
   onPrevWeek: () => void;
   onNextWeek: () => void;
   onToday: () => void;
-  onToggleTheme: () => void;
+  onSave: () => void;
   onDrop: (e: React.DragEvent, date: string, time: string, operatorId: string) => void;
   onDragStart: (e: React.DragEvent, id: string) => void;
 }
 
 export const CalendarView: React.FC<CalendarViewProps> = ({
   loading,
+  saving = false,
   operators,
   interventions,
   weekDays,
   timeSlots,
   currentDate,
-  isDarkMode,
   onPrevWeek,
   onNextWeek,
   onToday,
-  onToggleTheme,
+  onSave,
   onDrop,
   onDragStart
 }) => {
@@ -63,45 +64,53 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
   return (
     <div className="flex-1 flex flex-col h-full overflow-hidden bg-white dark:bg-slate-900 transition-colors duration-200">
       {/* Header Controls */}
-      <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shrink-0">
-        <div className="flex items-center gap-4">
-          <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-100 capitalize flex items-center gap-2">
-            <CalendarIcon className="w-6 h-6 text-slate-600 dark:text-slate-400" />
+      <div className="flex flex-col md:flex-row md:items-center justify-between px-4 md:px-6 py-3 md:py-4 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shrink-0 gap-3 md:gap-0">
+        
+        {/* Title and Nav */}
+        <div className="flex items-center justify-between md:justify-start gap-4 w-full md:w-auto">
+          <h2 className="text-lg md:text-2xl font-bold text-slate-800 dark:text-slate-100 capitalize flex items-center gap-2">
+            <CalendarIcon className="w-5 h-5 md:w-6 md:h-6 text-slate-600 dark:text-slate-400" />
             {formatMonthYear(weekDays[0] || currentDate)}
           </h2>
           <div className="flex items-center bg-slate-100 dark:bg-slate-800 rounded-lg p-1 border border-slate-200 dark:border-slate-700">
             <button onClick={onPrevWeek} className="p-1 hover:bg-white dark:hover:bg-slate-700 hover:shadow-sm rounded transition-all text-slate-600 dark:text-slate-400">
-              <ChevronLeft className="w-5 h-5" />
+              <ChevronLeft className="w-4 h-4 md:w-5 md:h-5" />
             </button>
-            <button onClick={onToday} className="px-3 py-1 text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white border-x border-slate-200 dark:border-slate-700 mx-1">
+            <button onClick={onToday} className="px-2 md:px-3 py-1 text-xs md:text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white border-x border-slate-200 dark:border-slate-700 mx-1">
               Oggi
             </button>
             <button onClick={onNextWeek} className="p-1 hover:bg-white dark:hover:bg-slate-700 hover:shadow-sm rounded transition-all text-slate-600 dark:text-slate-400">
-              <ChevronRight className="w-5 h-5" />
+              <ChevronRight className="w-4 h-4 md:w-5 md:h-5" />
             </button>
           </div>
         </div>
-        <div className="flex items-center gap-3">
-            <div className="text-sm text-slate-500 dark:text-slate-400 mr-2 flex items-center gap-2">
-                <Users className="w-4 h-4" />
-                {operators.length} Operatori
+
+        {/* Operators & Actions */}
+        <div className="flex items-center justify-between md:justify-end gap-3 w-full md:w-auto">
+            {/* Save Button */}
+            <button 
+              onClick={onSave}
+              disabled={saving}
+              className="flex items-center gap-2 px-3 py-1.5 md:px-4 md:py-2 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white rounded-lg text-xs md:text-sm font-medium transition-colors shadow-sm disabled:opacity-70 disabled:cursor-not-allowed"
+            >
+              {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+              <span className="hidden md:inline">{saving ? 'Salvataggio...' : 'Salva'}</span>
+            </button>
+
+            <div className="hidden md:block w-px h-6 bg-slate-200 dark:bg-slate-700 mx-1"></div>
+
+            <div className="flex items-center overflow-x-auto no-scrollbar gap-2 mask-linear-fade flex-1 md:flex-none">
+                <div className="hidden md:flex text-sm text-slate-500 dark:text-slate-400 mr-2 items-center gap-2">
+                    <Users className="w-4 h-4" />
+                    <span className="whitespace-nowrap">{operators.length} Ops</span>
+                </div>
+                {operators.map(op => (
+                    <div key={op.id} className="flex-shrink-0 flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 shadow-sm text-[10px] md:text-xs font-medium">
+                        <div className={`w-2 h-2 rounded-full ${op.color.split(' ')[0].replace('bg-', 'bg-')}`} style={{backgroundColor: 'currentColor'}} />
+                        <span className="text-slate-700 dark:text-slate-300 whitespace-nowrap">{op.name.split(' ')[0]}</span>
+                    </div>
+                ))}
             </div>
-             {operators.map(op => (
-                 <div key={op.id} className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 shadow-sm text-xs font-medium">
-                     <div className={`w-2 h-2 rounded-full ${op.color.split(' ')[0].replace('bg-', 'bg-')}`} style={{backgroundColor: 'currentColor'}} />
-                     <span className="text-slate-700 dark:text-slate-300">{op.name.split(' ')[0]}</span>
-                 </div>
-             ))}
-             
-             {/* Divider and Theme Toggle */}
-             <div className="w-px h-5 bg-slate-200 dark:bg-slate-700 mx-2"></div>
-             <button 
-                onClick={onToggleTheme}
-                className="p-2 rounded-lg bg-slate-50 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-blue-600 dark:hover:text-blue-400 transition-all border border-slate-200 dark:border-slate-700"
-                title={isDarkMode ? "Tema Chiaro" : "Tema Scuro"}
-              >
-                {isDarkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
-              </button>
         </div>
       </div>
 
@@ -139,7 +148,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
             </div>
 
             {/* Grid Body */}
-            <div className="flex-1">
+            <div className="flex-1 pb-10 md:pb-0">
                 {timeSlots.map((time) => {
                     const isFullHour = time.endsWith("00");
                     return (

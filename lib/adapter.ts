@@ -5,4 +5,5 @@ export interface SchedulerAdapter {
   fetchOperators(): Promise<Operator[]>;
   fetchInterventions(): Promise<Intervention[]>;
   updateIntervention(intervention: Intervention): Promise<Intervention>;
+  saveSchedule(interventions: Intervention[]): Promise<void>;
 }

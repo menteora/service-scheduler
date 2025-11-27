@@ -7,6 +7,7 @@ export function useScheduler(adapter: SchedulerAdapter) {
   const [operators, setOperators] = useState<Operator[]>([]);
   const [config, setConfig] = useState<CalendarConfig | null>(null);
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   // Initial Data Load
@@ -77,12 +78,27 @@ export function useScheduler(adapter: SchedulerAdapter) {
     }
   }, [interventions, adapter]);
 
+  // Action: Save All
+  const saveChanges = useCallback(async () => {
+    try {
+      setSaving(true);
+      await adapter.saveSchedule(interventions);
+      // Optional: Add success notification logic here
+    } catch (err: any) {
+      setError(err.message || "Failed to save schedule");
+    } finally {
+      setSaving(false);
+    }
+  }, [interventions, adapter]);
+
   return {
     interventions,
     operators,
     config,
     loading,
+    saving,
     error,
     moveIntervention,
+    saveChanges
   };
 }

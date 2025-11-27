@@ -8,10 +8,11 @@ export const CalendarContainer: React.FC = () => {
     interventions, 
     operators, 
     config, 
-    loading, 
+    loading,
+    saving, 
     isDarkMode, 
-    toggleTheme, 
-    moveIntervention 
+    moveIntervention,
+    saveChanges
   } = useSchedulerContext();
   
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -58,6 +59,7 @@ export const CalendarContainer: React.FC = () => {
   return (
     <CalendarView 
       loading={loading}
+      saving={saving}
       operators={operators}
       interventions={scheduledInterventions}
       weekDays={weekDays}
@@ -67,7 +69,7 @@ export const CalendarContainer: React.FC = () => {
       onPrevWeek={handlePrevWeek}
       onNextWeek={handleNextWeek}
       onToday={handleToday}
-      onToggleTheme={toggleTheme}
+      onSave={saveChanges}
       onDrop={handleDrop}
       onDragStart={handleDragStart}
     />

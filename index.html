@@ -44,6 +44,17 @@
         background: #64748b; 
       }
     </style>
+    <!-- Polyfill for Drag and Drop on Mobile Devices -->
+    <script src="https://cdn.jsdelivr.net/npm/mobile-drag-drop@2.3.0-rc.2/index.min.js"></script>
+    <script>
+      // Initialize the polyfill
+      var polyfill = MobileDragDrop.polyfill({
+        dragImageCenterOnTouch: true
+      });
+      
+      // Fix for scrolling while dragging
+      window.addEventListener('touchmove', function() {}, {passive: false});
+    </script>
   <script type="importmap">
 {
   "imports": {
@@ -59,7 +70,7 @@
 }
 </script>
 </head>
-  <body class="bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 antialiased transition-colors duration-200">
+  <body class="bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 antialiased transition-colors duration-200 overscroll-none">
     <div id="root"></div>
   </body>
 </html>

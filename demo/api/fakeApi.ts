@@ -23,3 +23,9 @@ export const updateInterventionApi = async (intervention: Intervention): Promise
   await delay(100); // Fast update
   return intervention;
 };
+
+export const saveInterventionsApi = async (interventions: Intervention[]): Promise<void> => {
+  await delay(800); // Simulate bulk save delay
+  console.log("Saving schedule:", interventions);
+  return;
+};
