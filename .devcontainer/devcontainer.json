@@ -1,0 +1,21 @@
+{
+  "name": "Service Scheduler",
+  "dockerComposeFile": "../../docker-compose-dev.yml",
+  "service": "service-scheduler",
+  "postCreateCommand": "npm install",
+  "workspaceFolder": "/workspace",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+          "dbaeumer.vscode-eslint",
+          "esbenp.prettier-vscode"
+      ],        
+      "settings": {
+        "terminal.integrated.shell.linux": "/bin/bash"
+      }
+    }
+  },
+  "remoteUser": "node",  
+  "forwardPorts": [3000],
+  "shutdownAction":"none"
+}
