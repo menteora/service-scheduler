@@ -1,0 +1,5 @@
+{
+  "name": "ServiceScheduler",
+  "description": "A drag-and-drop resource scheduling calendar. Supports weekly views, multi-operator splitting, and unscheduled intervention management.",
+  "requestFramePermissions": []
+}
