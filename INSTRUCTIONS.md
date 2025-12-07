@@ -56,10 +56,10 @@ L'API HTML5 Drag & Drop non supporta il touch nativamente. Per il funzionamento 
 
 ## 3. Implementazione dell'Adapter
 
-Devi creare un oggetto che soddisfi l'interfaccia `SchedulerAdapter` definita in `lib/adapter.ts`.
+Devi creare un oggetto che soddisfi l'interfaccia `SchedulerAdapter`. La importi direttamente dalla libreria (`./lib`), non dai tipi interni.
 
 ```typescript
-import { SchedulerAdapter, Intervention, Operator } from './lib/types';
+import { SchedulerAdapter, Intervention, Operator } from './lib';
 
 export const myBackendAdapter: SchedulerAdapter = {
   // 1. Recupero configurazione (ore, giorni, slot)
@@ -99,7 +99,7 @@ Importa il componente principale `OperatorScheduler` e passagli l'adapter.
 
 ```tsx
 import React, { useState } from 'react';
-import { OperatorScheduler } from './lib'; // Barrel file
+import { OperatorScheduler } from './lib'; // Importa direttamente dalla cartella
 import { myBackendAdapter } from './adapters/myBackendAdapter';
 
 const MyPage = () => {
@@ -132,3 +132,26 @@ I tipi principali si trovano in `lib/types.ts`.
 *   **Intervention**: L'unità di lavoro (id, titolo, data, ora inizio, durata, ecc.).
 
 Se il tuo backend restituisce campi diversi, dovrai mapparli all'interno del tuo `SchedulerAdapter` prima di restituirli al componente.
+
+## 6. Come Funzionano gli Import
+
+La cartella `lib` contiene un file `index.ts` (chiamato "Barrel File"). Questo file si occupa di esportare pubblicamente tutto ciò che ti serve.
+
+Grazie a questo file, non devi importare dai percorsi interni (es. `lib/components/OperatorScheduler`), ma puoi importare tutto dalla radice della cartella:
+
+**Corretto:**
+```typescript
+import { OperatorScheduler, SchedulerAdapter } from './lib';
+```
+
+**Sconsigliato (ma funzionante):**
+```typescript
+import { OperatorScheduler } from './lib/components/OperatorScheduler';
+import { SchedulerAdapter } from './lib/adapter';
+```
+
+Se decidi di compilare la libreria con `npm run build` e usarla come pacchetto npm esterno, l'import diventerà:
+```typescript
+import { OperatorScheduler } from 'service-scheduler';
+```
+Questo è gestito automaticamente dal file `package.json` aggiunto al progetto.
